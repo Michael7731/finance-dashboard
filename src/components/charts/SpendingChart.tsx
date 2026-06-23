@@ -22,7 +22,7 @@ export function SpendingChart({ data }: Props) {
           <XAxis dataKey="month" tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false} />
           <YAxis tick={{ fontSize: 11, fill: '#94a3b8' }} axisLine={false} tickLine={false}
             tickFormatter={v => `$${(v/1000).toFixed(1)}k`} />
-          <Tooltip formatter={(v: number) => [`$${v.toFixed(2)}`, 'Spending']}
+          <Tooltip formatter={(v) => [`$${Number(v).toFixed(2)}`, 'Spending']}
             contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 12 }} />
           <Area type="monotone" dataKey="spending" stroke="#6366f1" strokeWidth={2}
             fill="url(#grad)" dot={{ fill: '#6366f1', strokeWidth: 0, r: 3 }} />
