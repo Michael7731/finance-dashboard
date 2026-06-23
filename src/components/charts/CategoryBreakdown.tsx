@@ -18,7 +18,7 @@ export function CategoryBreakdown({ data }: { data: SpendingByCategory[] }) {
               <Pie data={top} cx="50%" cy="50%" innerRadius={45} outerRadius={70} dataKey="amount" paddingAngle={2}>
                 {top.map((entry, i) => <Cell key={i} fill={entry.color} />)}
               </Pie>
-              <Tooltip formatter={(v: number) => [formatCurrency(v), '']}
+              <Tooltip formatter={(v) => [formatCurrency(Number(v)), '']}
                 contentStyle={{ borderRadius: 12, border: '1px solid #e2e8f0', fontSize: 12 }} />
             </PieChart>
           </ResponsiveContainer>
