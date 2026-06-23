@@ -1,14 +1,11 @@
 'use client'
 import { useState } from 'react'
-import { signIn } from 'next-auth/react'
-import { useRouter, useSearchParams } from 'next/navigation'
+import { useRouter } from 'next/navigation'
 import Link from 'next/link'
-import { Suspense } from 'react'
 
-function LoginForm() {
+export default function SignupPage() {
   const router = useRouter()
-  const searchParams = useSearchParams()
-  const registered = searchParams.get('registered')
+  const [name, setName] = useState('')
   const [email, setEmail] = useState('')
   const [password, setPassword] = useState('')
   const [error, setError] = useState('')
@@ -18,10 +15,22 @@ function LoginForm() {
     e.preventDefault()
     setLoading(true)
     setError('')
-    const result = await signIn('credentials', { email, password, redirect: false })
+
+    const res = await fetch('/api/auth/register', {
+      method: 'POST',
+      headers: { 'Content-Type': 'application/json' },
+      body: JSON.stringify({ name, email, password }),
+    })
+
+    const data = await res.json()
     setLoading(false)
-    if (result?.error) setError('Invalid email or password')
-    else router.push('/dashboard')
+
+    if (!res.ok) {
+      setError(data.error)
+      return
+    }
+
+    router.push('/login?registered=true')
   }
 
   return (
@@ -33,43 +42,38 @@ function LoginForm() {
           <p className="text-indigo-300 mt-1">Track every dollar, every day</p>
         </div>
         <div className="bg-white rounded-2xl shadow-2xl p-8">
-          <h2 className="text-xl font-semibold text-gray-900 mb-6">Sign in</h2>
-          {registered && (
-            <div className="bg-emerald-50 border border-emerald-100 rounded-xl p-4 mb-6">
-              <p className="text-sm font-medium text-emerald-700">Account created! Sign in below.</p>
-            </div>
-          )}
+          <h2 className="text-xl font-semibold text-gray-900 mb-6">Create account</h2>
           <form onSubmit={handleSubmit} className="space-y-5">
+            <div>
+              <label className="block text-sm font-medium text-gray-700 mb-1.5">Full name</label>
+              <input type="text" value={name} onChange={e => setName(e.target.value)}
+                placeholder="John Doe"
+                className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" required />
+            </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Email</label>
               <input type="email" value={email} onChange={e => setEmail(e.target.value)}
+                placeholder="you@example.com"
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" required />
             </div>
             <div>
               <label className="block text-sm font-medium text-gray-700 mb-1.5">Password</label>
               <input type="password" value={password} onChange={e => setPassword(e.target.value)}
+                placeholder="Min. 6 characters"
                 className="w-full px-4 py-3 rounded-xl border border-gray-200 focus:outline-none focus:ring-2 focus:ring-indigo-500 text-sm" required />
             </div>
             {error && <p className="text-sm text-red-600 bg-red-50 rounded-lg px-3 py-2">{error}</p>}
             <button type="submit" disabled={loading}
               className="w-full bg-indigo-600 hover:bg-indigo-700 disabled:bg-indigo-300 text-white font-semibold py-3 px-4 rounded-xl transition">
-              {loading ? 'Signing in…' : 'Sign in'}
+              {loading ? 'Creating account…' : 'Create account'}
             </button>
           </form>
           <p className="text-center text-sm text-gray-500 mt-6">
-            Don't have an account?{' '}
-            <Link href="/signup" className="text-indigo-600 font-medium hover:underline">Sign up</Link>
+            Already have an account?{' '}
+            <Link href="/login" className="text-indigo-600 font-medium hover:underline">Sign in</Link>
           </p>
         </div>
       </div>
     </div>
-  )
-}
-
-export default function LoginPage() {
-  return (
-    <Suspense>
-      <LoginForm />
-    </Suspense>
   )
 }
