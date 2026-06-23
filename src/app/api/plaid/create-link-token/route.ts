@@ -11,7 +11,7 @@ export async function POST() {
     user: { client_user_id: session.user.id },
     client_name: 'Finance Dashboard',
     products: [...PLAID_PRODUCTS] as Products[],
-    country_codes: PLAID_COUNTRY_CODES as CountryCode[],
+    country_codes: [...PLAID_COUNTRY_CODES] as CountryCode[],
     language: 'en',
   })
   return NextResponse.json(response.data)
